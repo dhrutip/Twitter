@@ -34,14 +34,14 @@ public class TimelineActivity extends AppCompatActivity {
     RecyclerView rvTweets;
     List<Tweet> tweets;
     TweetsAdapter adapter;
-    Button btnLogout;
+    Button btnLog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
 
-        btnLogout = findViewById(R.id.btnLogout);
+        btnLog = findViewById(R.id.btnLog);
 
         client = TwitterApp.getRestClient(this);
 
@@ -54,13 +54,6 @@ public class TimelineActivity extends AppCompatActivity {
         rvTweets.setLayoutManager(new LinearLayoutManager(this));
         rvTweets.setAdapter(adapter);
         populateHomeTimeLine();
-
-        btnLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onLogoutButton();
-            }
-        });
     }
 
     private void populateHomeTimeLine() {
@@ -106,6 +99,11 @@ public class TimelineActivity extends AppCompatActivity {
             Intent intent = new Intent(this, ComposeActivity.class);
             startActivityForResult(intent, REQUEST_CODE);
             return true;
+        }
+        if (item.getItemId() == R.id.btnLog) {
+            // logout icon is clocked
+            onLogoutButton();
+            return false;
         }
         return super.onOptionsItemSelected(item);
     }

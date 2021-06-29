@@ -38,15 +38,14 @@
 
     <TextView
         android:id="@+id/tvTimeSince"
-        android:layout_width="44dp"
+        android:layout_width="177dp"
+        android:gravity="right"
         android:layout_height="wrap_content"
         android:layout_above="@+id/tvBody"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_marginTop="0dp"
-        android:layout_marginEnd="6dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="3dp"
+        android:layout_marginBottom="0dp"
         tools:text="1s" />
 </RelativeLayout>

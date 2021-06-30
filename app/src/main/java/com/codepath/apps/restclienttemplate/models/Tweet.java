@@ -25,16 +25,28 @@ public class Tweet {
     public String createdAt;
     public User user;
     public String timeSince;
+    public String imageUrl;
 
     // empty constructor for Parceler library
     public Tweet() {}
 
     public static Tweet fromJson(JSONObject jsonObject) throws JSONException {
         Tweet tweet = new Tweet();
-        tweet.body = jsonObject.getString("text");
+        if (jsonObject.has("full_text")) {
+            tweet.body = jsonObject.getString("full_text");
+        } else {
+            tweet.body = jsonObject.getString("text");
+        }
         tweet.createdAt = jsonObject.getString("created_at");
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
         tweet.timeSince = tweet.getRelativeTimeAgo(tweet.createdAt);
+        JSONObject entities = jsonObject.getJSONObject("entities");
+        if (entities.has("media")) {
+            tweet.imageUrl = entities.getJSONArray("media").getJSONObject(0).getString("media_url_https");
+        } else {
+            tweet.imageUrl = null;
+        }
+
         return tweet;
     }
 

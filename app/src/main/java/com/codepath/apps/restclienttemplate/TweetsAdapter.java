@@ -11,11 +11,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder> {
 
@@ -57,7 +60,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         TextView tvActualName;
         TextView tvTimeSince;
         TextView tvTwitterHandle;
-
+        ImageView ivUrl;
 
         public ViewHolder(@NonNull @NotNull View itemView) {
             super(itemView); // one row in the recycler view
@@ -66,14 +69,25 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvActualName = itemView.findViewById(R.id.tvActualName);
             tvTimeSince = itemView.findViewById(R.id.tvTimeSince);
             tvTwitterHandle = itemView.findViewById(R.id.tvTwitterHandle);
+            ivUrl = itemView.findViewById(R.id.ivUrl);
         }
 
         public void bind(Tweet tweet) {
             tvBody.setText(tweet.body);
-            tvTwitterHandle.setText(tweet.user.twitterHandle);
+            tvTwitterHandle.setText("@" + tweet.user.twitterHandle);
             tvTimeSince.setText(tweet.timeSince);
             tvActualName.setText(tweet.user.actualName);
-            Glide.with(context).load(tweet.user.profileImageUrl).into(ivProfileImage);
+            Glide.with(context)
+                    .load(tweet.user.profileImageUrl)
+                    .transform(new CircleCrop())
+                    .into(ivProfileImage);
+            ivUrl.setVisibility(View.INVISIBLE);
+            if (ivUrl != null) {
+                ivUrl.setVisibility(View.VISIBLE);
+                Glide.with(context)
+                        .load(tweet.imageUrl)
+                        .into(ivUrl);
+            }
         }
     }
 
@@ -83,7 +97,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         notifyDataSetChanged();
     }
 
-    // Add a list of items -- change to type used
+    // Add a list of items
     public void addAll(List<Tweet> list) {
         tweets.addAll(list);
         notifyDataSetChanged();

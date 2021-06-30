@@ -31,7 +31,7 @@ import okhttp3.Headers;
 public class TimelineActivity extends AppCompatActivity {
 
     public static final String TAG = "TimelineActivity";
-    private final int REQUEST_CODE = 20;
+    protected final int REQUEST_CODE = 20;
     SwipeRefreshLayout swipeContainer;
     TwitterClient client;
     RecyclerView rvTweets;
@@ -133,7 +133,7 @@ public class TimelineActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.compose) {
             // compose icon is tapped
-            // Toast.makeText(this, "Compose!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Compose!", Toast.LENGTH_SHORT).show();
             // navigate to compose activity
             Intent intent = new Intent(this, ComposeActivity.class);
             startActivityForResult(intent, REQUEST_CODE);

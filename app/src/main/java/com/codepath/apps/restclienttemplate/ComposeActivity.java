@@ -31,9 +31,7 @@ public class ComposeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityTimelineBinding binding = ActivityTimelineBinding.inflate(getLayoutInflater());
-        View view = binding.getRoot();
-        setContentView(view);
+        setContentView(R.layout.activity_compose);
 
         client = TwitterApp.getRestClient(this);
         etCompose = findViewById(R.id.etCompose);

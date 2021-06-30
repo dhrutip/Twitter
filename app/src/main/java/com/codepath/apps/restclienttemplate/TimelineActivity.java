@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.codepath.apps.restclienttemplate.databinding.ActivityTimelineBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
@@ -31,22 +32,24 @@ public class TimelineActivity extends AppCompatActivity {
 
     public static final String TAG = "TimelineActivity";
     private final int REQUEST_CODE = 20;
-    private SwipeRefreshLayout swipeContainer;
+    SwipeRefreshLayout swipeContainer;
     TwitterClient client;
     RecyclerView rvTweets;
     List<Tweet> tweets;
     TweetsAdapter adapter;
-    Button btnLog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_timeline);
+        // view binding library
+        ActivityTimelineBinding binding = ActivityTimelineBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
 
-        btnLog = findViewById(R.id.btnLog);
+        rvTweets = binding.rvTweets;
+        swipeContainer = binding.swipeContainer;
+
         client = TwitterApp.getRestClient(this);
-        // find the recycler view
-        rvTweets = findViewById(R.id.rvTweets);
         // initialize the list of tweets and adapter
         tweets = new ArrayList<>();
         adapter = new TweetsAdapter(this, tweets);
@@ -55,14 +58,11 @@ public class TimelineActivity extends AppCompatActivity {
         rvTweets.setAdapter(adapter);
         populateHomeTimeLine();
 
-        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
         // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                // Your code to refresh the list here.
-                // Make sure you call swipeContainer.setRefreshing(false)
-                // once the network request has completed successfully.
+                // refresh the list
                 fetchTimelineAsync(0);
             }
         });
@@ -95,7 +95,7 @@ public class TimelineActivity extends AppCompatActivity {
         });
     }
 
-    private void populateHomeTimeLine() {
+    protected void populateHomeTimeLine() {
         client.getHomeTimeline(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
@@ -117,7 +117,7 @@ public class TimelineActivity extends AppCompatActivity {
         });
     }
 
-    private void onLogoutButton() {
+    protected void onLogoutButton() {
         client.clearAccessToken(); // forget who's logged in
         finish(); // navigate backwards to Login screen
     }

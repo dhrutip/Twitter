@@ -43,6 +43,18 @@ public class TimelineActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
 
+        btnLog = findViewById(R.id.btnLog);
+        client = TwitterApp.getRestClient(this);
+        // find the recycler view
+        rvTweets = findViewById(R.id.rvTweets);
+        // initialize the list of tweets and adapter
+        tweets = new ArrayList<>();
+        adapter = new TweetsAdapter(this, tweets);
+        // recycler view setup: layout manager and adapter
+        rvTweets.setLayoutManager(new LinearLayoutManager(this));
+        rvTweets.setAdapter(adapter);
+        populateHomeTimeLine();
+
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
         // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -59,18 +71,6 @@ public class TimelineActivity extends AppCompatActivity {
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
-
-        btnLog = findViewById(R.id.btnLog);
-        client = TwitterApp.getRestClient(this);
-        // find the recycler view
-        rvTweets = findViewById(R.id.rvTweets);
-        // initialize the list of tweets and adapter
-        tweets = new ArrayList<>();
-        adapter = new TweetsAdapter(this, tweets);
-        // recycler view setup: layout manager and adapter
-        rvTweets.setLayoutManager(new LinearLayoutManager(this));
-        rvTweets.setAdapter(adapter);
-        populateHomeTimeLine();
     }
 
     public void fetchTimelineAsync(int page) {

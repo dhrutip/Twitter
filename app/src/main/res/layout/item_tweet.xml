@@ -12,40 +12,66 @@
         android:layout_height="50dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="0dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
-        android:id="@+id/tvScreenName"
+        android:id="@+id/tvActualName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="5dp"
         android:layout_toEndOf="@+id/ivProfileImage"
-        tools:text="twitterhandle" />
+        android:layout_marginStart="5dp"
+        tools:text="Actual Name"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/tvBody"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tvScreenName"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="2dp"
         android:layout_toEndOf="@+id/ivProfileImage"
-        tools:text="sample tweet here! tweet tweet more tweet." />
+        android:layout_width="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_below="@+id/tvActualName"
+        android:layout_marginTop="3dp"
+        android:layout_marginEnd="5dp"
+        tools:text="sample tweet here! tweet tweet more tweet."
+
+        android:autoLink="all"
+        android:linksClickable="true"/>
 
     <TextView
         android:id="@+id/tvTimeSince"
-        android:layout_width="177dp"
         android:gravity="right"
+        android:layout_toEndOf="@id/tvTwitterHandle"
+        android:layout_alignTop="@id/tvTwitterHandle"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/tvBody"
-        android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="0dp"
+        android:layout_marginRight="5dp"
         tools:text="1s" />
+
+    <TextView
+        android:id="@+id/tvTwitterHandle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/tvBody"
+        android:layout_alignTop="@id/tvActualName"
+        android:layout_marginLeft="5dp"
+        android:layout_toRightOf="@id/tvActualName"
+        android:text="twitterhandle"  />
+
+    <ImageView
+        android:id="@+id/ivUrl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/tvBody"
+        android:layout_alignRight="@id/tvBody"
+        android:layout_below="@id/tvBody"
+        android:layout_marginTop="5dp"
+        android:scaleType="fitCenter"
+        tools:srcCompat="@tools:sample/avatars"/>
+
 </RelativeLayout>

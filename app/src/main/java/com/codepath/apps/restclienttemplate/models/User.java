@@ -7,8 +7,8 @@ import org.parceler.Parcel;
 @Parcel
 public class User {
 
-    public String name;
-    public String screenName;
+    public String actualName;
+    public String twitterHandle;
     public String profileImageUrl;
 
     // empty constructor for Parceler library
@@ -16,8 +16,8 @@ public class User {
 
     public static User fromJson(JSONObject jsonObject) throws JSONException {
         User user = new User();
-        user.name = jsonObject.getString("name");
-        user.screenName = jsonObject.getString("screen_name");
+        user.actualName = jsonObject.getString("name");
+        user.twitterHandle = jsonObject.getString("screen_name");
         user.profileImageUrl = jsonObject.getString("profile_image_url_https");
         return user;
 

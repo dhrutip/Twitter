@@ -26,6 +26,7 @@ public class Tweet {
     public User user;
     public String timeSince;
     public String imageUrl;
+    public long mId;
 
     // empty constructor for Parceler library
     public Tweet() {}
@@ -40,13 +41,13 @@ public class Tweet {
         tweet.createdAt = jsonObject.getString("created_at");
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
         tweet.timeSince = tweet.getRelativeTimeAgo(tweet.createdAt);
+        tweet.mId = jsonObject.getLong("id");
         JSONObject entities = jsonObject.getJSONObject("entities");
         if (entities.has("media")) {
             tweet.imageUrl = entities.getJSONArray("media").getJSONObject(0).getString("media_url_https");
         } else {
             tweet.imageUrl = null;
         }
-
         return tweet;
     }
 
@@ -89,5 +90,9 @@ public class Tweet {
         }
 
         return "";
+    }
+
+    public long getmId() {
+        return mId;
     }
 }

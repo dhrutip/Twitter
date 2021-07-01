@@ -18,8 +18,6 @@ import com.github.scribejava.core.builder.api.BaseApi;
  * Key and Secret are provided by the developer site for the given API i.e dev.twitter.com
  * Add methods for each relevant endpoint in the API.
  * 
- * NOTE: You may want to rename this object based on the service i.e TwitterClient or FlickrClient
- * 
  */
 public class TwitterClient extends OAuthBaseClient {
 	public static final BaseApi REST_API_INSTANCE = TwitterApi.instance();
@@ -43,10 +41,8 @@ public class TwitterClient extends OAuthBaseClient {
 						context.getString(R.string.intent_scheme), context.getPackageName(), FALLBACK_URL));
 	}
 
-	// define methods for different API endpoints here
 	public void getHomeTimeline(JsonHttpResponseHandler handler) {
 		String apiUrl = getApiUrl("statuses/home_timeline.json");
-		// Can specify query string params directly or through RequestParams.
 		RequestParams params = new RequestParams();
 		params.put("count", 25);
 		params.put("since_id", 1);
@@ -55,20 +51,17 @@ public class TwitterClient extends OAuthBaseClient {
 
 	public void publishTweet(String tweetContent, JsonHttpResponseHandler handler) {
 		String apiUrl = getApiUrl("statuses/update.json");
-		// Can specify query string params directly or through RequestParams.
 		RequestParams params = new RequestParams();
 		params.put("status", tweetContent);
 		client.post(apiUrl, params, "", handler);
 	}
 
-	/* 1. Define the endpoint URL with getApiUrl and pass a relative path to the endpoint
-	 * 	  i.e getApiUrl("statuses/home_timeline.json");
-	 * 2. Define the parameters to pass to the request (query or body)
-	 *    i.e RequestParams params = new RequestParams("foo", "bar");
-	 * 3. Define the request method and make a call to the client
-	 *    i.e client.get(apiUrl, params, handler);
-	 *    i.e client.post(apiUrl, params, handler);
-	 */
-
-
+	public void getHomeTimelineExtended(long mId, JsonHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("statuses/home_timeline.json");
+		RequestParams params = new RequestParams();
+		params.put("tweet_mode", "extended");
+		params.put("count", 25);
+		params.put("max_id", mId);
+		client.get(apiUrl, params, handler);
+	}
 }

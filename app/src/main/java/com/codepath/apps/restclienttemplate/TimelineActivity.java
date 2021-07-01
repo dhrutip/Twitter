@@ -32,11 +32,14 @@ public class TimelineActivity extends AppCompatActivity {
 
     public static final String TAG = "TimelineActivity";
     protected final int REQUEST_CODE = 20;
+    protected long MAX_ID = 0;
     SwipeRefreshLayout swipeContainer;
     TwitterClient client;
     RecyclerView rvTweets;
     List<Tweet> tweets;
     TweetsAdapter adapter;
+    // Store a member variable for the listener
+    private EndlessRecyclerViewScrollListener scrollListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,14 +51,28 @@ public class TimelineActivity extends AppCompatActivity {
 
         rvTweets = binding.rvTweets;
         swipeContainer = binding.swipeContainer;
-
         client = TwitterApp.getRestClient(this);
+
         // initialize the list of tweets and adapter
         tweets = new ArrayList<>();
         adapter = new TweetsAdapter(this, tweets);
+
         // recycler view setup: layout manager and adapter
-        rvTweets.setLayoutManager(new LinearLayoutManager(this));
         rvTweets.setAdapter(adapter);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        rvTweets.setLayoutManager(linearLayoutManager);
+
+        // endless scroll
+        // Retain an instance so that you can call `resetState()` for fresh searches
+        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // Triggered only when new data needs to be appended to the list
+                loadNextDataFromApi(page);
+            }
+        };
+        // Adds the scroll listener to RecyclerView
+        rvTweets.addOnScrollListener(scrollListener);
         populateHomeTimeLine();
 
         // Setup refresh listener which triggers new data loading
@@ -66,11 +83,36 @@ public class TimelineActivity extends AppCompatActivity {
                 fetchTimelineAsync(0);
             }
         });
+
         // Configure the refreshing colors
         swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
+    }
+
+    // Append the next page of data into the adapter for endless scrolling
+    public void loadNextDataFromApi(int offset) {
+        client.getHomeTimelineExtended(MAX_ID, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                Log.i("Endless", "success");
+                JSONArray jsonArray = json.jsonArray;
+                try {
+                    tweets.addAll(Tweet.fromJsonArray(jsonArray));
+                    MAX_ID = tweets.get(tweets.size()-1).getmId();
+                    adapter.notifyDataSetChanged();
+                } catch (JSONException e) {
+                    Log.e(TAG, "Endless scroll json exception", e);
+                    e.printStackTrace();
+                }
+            }
+            @Override
+            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                Log.d("DEBUG", "Endless scroll error: " + response, throwable);
+            }
+        });
+
     }
 
     public void fetchTimelineAsync(int page) {
@@ -82,12 +124,16 @@ public class TimelineActivity extends AppCompatActivity {
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 // Remember to CLEAR OUT old items before appending in the new ones
                 adapter.clear();
-                // ...the data has come back, add new items to your adapter...
-                populateHomeTimeLine();
-                // Now we call setRefreshing(false) to signal refresh has finished
-                swipeContainer.setRefreshing(false);
+                JSONArray jsonArray = json.jsonArray;
+                try {
+                    tweets.addAll(Tweet.fromJsonArray(jsonArray));
+                    populateHomeTimeLine();
+                    swipeContainer.setRefreshing(false);
+                } catch (JSONException e) {
+                    Log.e(TAG, "Json exception", e);
+                    e.printStackTrace();
+                }
             }
-
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
                 Log.d("DEBUG", "Fetch timeline error: " + throwable);
@@ -103,13 +149,13 @@ public class TimelineActivity extends AppCompatActivity {
                 JSONArray jsonArray = json.jsonArray;
                 try {
                     tweets.addAll(Tweet.fromJsonArray(jsonArray));
+                    MAX_ID = tweets.get(tweets.size()-1).mId;
                     adapter.notifyDataSetChanged();
                 } catch (JSONException e) {
                     Log.e(TAG, "Json exception", e);
                     e.printStackTrace();
                 }
             }
-
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
                 Log.e(TAG, "onFailure" + response, throwable);
@@ -132,15 +178,13 @@ public class TimelineActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.compose) {
-            // compose icon is tapped
-            Toast.makeText(this, "Compose!", Toast.LENGTH_SHORT).show();
             // navigate to compose activity
             Intent intent = new Intent(this, ComposeActivity.class);
             startActivityForResult(intent, REQUEST_CODE);
             return true;
         }
         if (item.getItemId() == R.id.btnLog) {
-            // logout icon is clocked
+            // logout icon is clicked
             onLogoutButton();
             return false;
         }

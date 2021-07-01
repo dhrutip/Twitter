@@ -1,6 +1,7 @@
 package com.codepath.apps.restclienttemplate;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,6 +62,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         TextView tvTimeSince;
         TextView tvTwitterHandle;
         ImageView ivUrl;
+        TextView tvLikes;
+        TextView tvRetweets;
 
         public ViewHolder(@NonNull @NotNull View itemView) {
             super(itemView); // one row in the recycler view
@@ -70,6 +73,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvTimeSince = itemView.findViewById(R.id.tvTimeSince);
             tvTwitterHandle = itemView.findViewById(R.id.tvTwitterHandle);
             ivUrl = itemView.findViewById(R.id.ivUrl);
+            tvLikes = itemView.findViewById(R.id.tvLikes);
+            tvRetweets = itemView.findViewById(R.id.tvRetweets);
         }
 
         public void bind(Tweet tweet) {
@@ -77,6 +82,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvTwitterHandle.setText("@" + tweet.user.twitterHandle);
             tvTimeSince.setText(tweet.timeSince);
             tvActualName.setText(tweet.user.actualName);
+            tvRetweets.setText(String.valueOf(tweet.retweets));
+            tvLikes.setText(String.valueOf(tweet.likes));
             Glide.with(context)
                     .load(tweet.user.profileImageUrl)
                     .transform(new CircleCrop())

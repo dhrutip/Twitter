@@ -27,6 +27,8 @@ public class Tweet {
     public String timeSince;
     public String imageUrl;
     public long mId;
+    public long likes;
+    public long retweets;
 
     // empty constructor for Parceler library
     public Tweet() {}
@@ -42,6 +44,8 @@ public class Tweet {
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
         tweet.timeSince = tweet.getRelativeTimeAgo(tweet.createdAt);
         tweet.mId = jsonObject.getLong("id");
+        tweet.likes = jsonObject.getLong("favorite_count");
+        tweet.retweets = jsonObject.getLong("retweet_count");
         JSONObject entities = jsonObject.getJSONObject("entities");
         if (entities.has("media")) {
             tweet.imageUrl = entities.getJSONArray("media").getJSONObject(0).getString("media_url_https");

@@ -38,8 +38,8 @@ public class TimelineActivity extends AppCompatActivity {
     RecyclerView rvTweets;
     List<Tweet> tweets;
     TweetsAdapter adapter;
-    // Store a member variable for the listener
     private EndlessRecyclerViewScrollListener scrollListener;
+    MenuItem miActionProgressItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,9 +93,11 @@ public class TimelineActivity extends AppCompatActivity {
 
     // Append the next page of data into the adapter for endless scrolling
     public void loadNextDataFromApi(int offset) {
+        showProgressBar();
         client.getHomeTimelineExtended(MAX_ID, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
+                hideProgressBar();
                 Log.i("Endless", "success");
                 JSONArray jsonArray = json.jsonArray;
                 try {
@@ -119,12 +121,14 @@ public class TimelineActivity extends AppCompatActivity {
         // Send the network request to fetch the updated data
         // `client` here is an instance of Android Async HTTP
         // getHomeTimeline is an example endpoint.
+        showProgressBar();
         client.getHomeTimeline(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 // Remember to CLEAR OUT old items before appending in the new ones
                 adapter.clear();
                 JSONArray jsonArray = json.jsonArray;
+                hideProgressBar();
                 try {
                     tweets.addAll(Tweet.fromJsonArray(jsonArray));
                     populateHomeTimeLine();
@@ -179,8 +183,10 @@ public class TimelineActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.compose) {
             // navigate to compose activity
+            showProgressBar();
             Intent intent = new Intent(this, ComposeActivity.class);
             startActivityForResult(intent, REQUEST_CODE);
+            hideProgressBar();
             return true;
         }
         if (item.getItemId() == R.id.btnLog) {
@@ -204,6 +210,25 @@ public class TimelineActivity extends AppCompatActivity {
             rvTweets.smoothScrollToPosition(0);
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // Store instance of the menu item containing progress
+        miActionProgressItem = menu.findItem(R.id.miActionProgress);
+
+        // Return to finish
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    public void showProgressBar() {
+        // Show progress item
+        miActionProgressItem.setVisible(true);
+    }
+
+    public void hideProgressBar() {
+        // Hide progress item
+        miActionProgressItem.setVisible(false);
     }
 
 }

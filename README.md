@@ -46,7 +46,7 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-[Twitter](twitter.gif)
+[Twitter](twitterDemo.gif)
 
 GIFs created with [LICEcap](https://www.cockos.com/licecap/).
 
